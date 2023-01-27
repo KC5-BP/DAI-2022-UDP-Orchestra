@@ -1,23 +1,46 @@
-const protocol = require('./concert-protocol');
+var protocol = require('./concert-protocol');
 
 // We use a standard Node.js module to work with UDP
-const dgram = ('dgram');
+var dgram = require('dgram');
 
 // Let's create a datagram socket. We will use it to send our UDP datagrams
-const s = dgram.createSocket('udp4');
+var s = dgram.createSocket('udp4');
 
-// Create a measure object and serialize it to JSON
-const measure = {
-    timestamp: Date.now(),
-    location: this.location,
-    temperature: this.temperature
-};
-const payload = JSON.stringify(measure);
+function Musician(sound) {
+    this.sound = sound;
 
-// Send the payload via UDP (multicast)
-message = new Buffer(payload);
+    Musician.prototype.playMusic = function () {
+        // Serialize the sound to JSON
+        const payload = JSON.stringify(this.sound);
 
-s.send(message, 0, message.length, protocol.PROTOCOL_PORT, protocol.PROTOCOL_MULTICAST_ADDRESS,
-    function (err, bytes) {
-        console.log("Sending payload: " + payload + " via port " + s.address().port);
-    });
+        // Send the payload via UDP (multicast)
+        message = new Buffer(payload);
+        s.send(message, 0, message.length, protocol.PROTOCOL_PORT, protocol.PROTOCOL_MULTICAST_ADDRESS, function (err, bytes) {
+            console.log("Sending payload: " + payload + " via port " + s.address().port);
+        });
+    }
+
+    // Play the music every 1 second
+    setInterval(this.playMusic.bind(this), 1000);
+}
+
+// Get the appropriate sound depending on the instrument
+const sound = (function () {
+    switch (process.argv[2]) {
+        case 'piano':
+            return 'ti-ta-ti';
+        case 'trumpet':
+            return 'pouet';
+        case 'flute':
+            return 'trulu';
+        case 'violin':
+            return 'gzi-gzi';
+        case 'drum':
+            return 'boum-boum';
+        default:
+            return 'unknown';
+    }
+})();
+
+// Create a new musician
+const musician = new Musician(sound);
