@@ -1,17 +1,23 @@
 var protocol = require('./concert-protocol');
 
 // We use a standard Node.js module to create UUIDs
-import { v4 as uuidv4 } from 'uuid';
+const {v4: uuidv4} = require('uuid');
 
 // We use a standard Node.js module to work with UDP
 var dgram = require('dgram');
+
+// Include Nodejs' net module for TCP server.
+const Net = require('net');
+
+// The port on which the TCP server is listening.
+const port = protocol.TCP_PROTOCOL_PORT;
 
 /*
  * Let's create a datagram socket. We will use it to listen for datagrams published in the
  * multicast group by thermometers and containing measures
  */
 const socket = dgram.createSocket('udp4');
-socket.bind(protocol.PROTOCOL_PORT, function() {
+socket.bind(protocol.PROTOCOL_PORT, function () {
     console.log("Joining multicast group");
     socket.addMembership(protocol.PROTOCOL_MULTICAST_ADDRESS);
 });
@@ -47,9 +53,9 @@ function getInstrument(sound) {
 }
 
 // This call back is invoked when a new datagram has arrived.
-socket.on('message', function(msg, source) {
+socket.on('message', function (msg, source) {
     console.log("Data has arrived: " + msg + ". Source port: " + source.port);
-    if(musicians.has(source.port)) {
+    if (musicians.has(source.port)) {
         musicians.get(source.port).lastSeen = new Date();
     } else {
         musicians.set(source.port, new Musician(uuidv4(), getInstrument(msg)));
@@ -58,7 +64,37 @@ socket.on('message', function(msg, source) {
     // musicians = musicians.filter(isAlive);
 });
 
+// Create a new TCP server.
+// Based on the example from https://riptutorial.com/node-js/example/22405/a-simple-tcp-server
 
+const server = new Net.Server();
+
+// The server listens for any incoming connection requests.
+server.listen(port, function () {
+    console.log(`Server listening for connection requests on socket localhost:${port}.`);
+});
+
+// New connection event.
+server.on('connection', function (socket) {
+    console.log('A new connection has been established.');
+
+    // Send the list of active musicians to the client.
+    const activeMusicians = new Map(
+        [...musicians].filter(isAlive) // Black js magic
+    );
+    socket.write(JSON.stringify(Array.from(activeMusicians.values())));
+
+});
+
+// On end event.
+socket.on('end', function () {
+    console.log('Closing connection with the client');
+});
+
+// Catch errors.
+socket.on('error', function (err) {
+    console.log(`Error: ${err}`);
+});
 
 
 
