@@ -104,13 +104,13 @@ Reminder: answer the following questions [here](https://forms.gle/6SM7cu4cYhNsRv
 ## Task 1: design the application architecture and protocols
 
 | #        | Topic                                                                                                                                                                   |
-| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| -------- |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Question | How can we represent the system in an **architecture diagram**, which gives information both about the Docker containers, the communication protocols and the commands? |
 |          | _Insert your diagram here..._                                                                                                                                           |
 | Question | Who is going to **send UDP datagrams** and **when**?                                                                                                                    |
-|          | _Enter your response here..._                                                                                                                                           |
+|          | Each musician sends an UDP datagram every seconds.                                                                                                                      |
 | Question | Who is going to **listen for UDP datagrams** and what should happen when a datagram is received?                                                                        |
-|          | _Enter your response here..._                                                                                                                                           |
+|          | The auditors listen for UDP datagarms and keep a list of active musician up to date.                                                                                    |
 | Question | What **payload** should we put in the UDP datagrams?                                                                                                                    |
 |          | _Enter your response here..._                                                                                                                                           |
 | Question | What **data structures** do we need in the UDP sender and receiver? When will we update these data structures? When will we query these data structures?                |

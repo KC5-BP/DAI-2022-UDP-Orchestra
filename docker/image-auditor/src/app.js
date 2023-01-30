@@ -79,16 +79,16 @@ server.on('connection', function (socket) {
     );
     socket.write(JSON.stringify(Array.from(activeMusicians.values())));
 
-});
+    // On end event.
+    socket.on('end', function () {
+        console.log('Closing connection with the client');
+    });
 
-// On end event.
-socket.on('end', function () {
-    console.log('Closing connection with the client');
-});
+    // Catch errors.
+    socket.on('error', function (err) {
+        console.log(`Error: ${err}`);
+    });
 
-// Catch errors.
-socket.on('error', function (err) {
-    console.log(`Error: ${err}`);
 });
 
 
