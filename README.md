@@ -114,7 +114,7 @@ Reminder: answer the following questions [here](https://forms.gle/6SM7cu4cYhNsRv
 | Question | What **payload** should we put in the UDP datagrams?                                                                                                                                                                                        |
 |          | The uuid of the musician and his sound.                                                                                                                                                                                                     |
 | Question | What **data structures** do we need in the UDP sender and receiver? When will we update these data structures? When will we query these data structures?                                                                                    |
-|          | In the sender, a structure of his musician but it is not mandatory. In the reciever, a map of all musician. The reciever updates its map when he recieve a new UDP message. He will also query it when a new TCP connection is established. |
+|          | In the sender, a structure of his musician but it is not mandatory. In the receiver, a map of all musicians. The receiver updates its map when he receive a new UDP message. He will also query it when a new TCP connection is established. |
 
 ## Task 2: implement a "musician" Node.js application
 
@@ -165,7 +165,7 @@ Reminder: answer the following questions [here](https://forms.gle/6SM7cu4cYhNsRv
 | Question | How can we use the `Day.js` npm module to help us with **date manipulations** and formatting?                                                                                                                   |
 |          | To manipulate and make operations on dates, for example to compute how long a musician hasn't been playing. However, we did not use it.                                                                         |
 | Question | When and how do we **get rid of inactive players**?                                                                                                                                                             |
-|          | In our choice of implementation, we don't get rid of musicians internally. But when we recieve a TCP request we only send the active ones.                                                                      |
+|          | In our choice of implementation, we get rid of the inactive players when we receive a new TCP request by overwriting our musicians.                                                                      |
 | Question | How do I implement a **simple TCP server** in Node.js?                                                                                                                                                          |
 |          | By following an online tutorial.<br/>Or by using the `net` NodeJS module, creating a server that listen on the dedicated TCP port and creating a callback function for the \`connection\` event on this server. |
 
