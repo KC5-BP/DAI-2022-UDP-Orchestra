@@ -1,54 +1,61 @@
-var protocol = require('./protocol');
 
-// We use a standard Node.js module to create UUIDs
+// *** IMPORT CONFIGS ***
+const PROTOCOL  = require('./protocol');
+const ORCHESTRE = require('./instruments');
+
+// ***  Modules  ***
+// To create UUIDs
 const {v4: uuidv4} = require('uuid');
-
-// We use a standard Node.js module to work with UDP
-var dgram = require('dgram');
+// To work with UDP Datagram
+const DGRAM = require('dgram');
 
 // Let's create a datagram socket. We will use it to send our UDP datagrams
-var s = dgram.createSocket('udp4');
+const SOCKET = DGRAM.createSocket('udp4');
+
+// *** Constants ***
+// Playing duration of an instrument in [ms]
+const DURATION = 1000;
+
+// *****************
+// Recover instrument name through argument & try to get its sound
+const INSTRU = process.argv[2];
 
 function Musician(sound) {
     this.sound = sound;
     this.uuid = uuidv4();
 
     Musician.prototype.playMusic = function () {
-        // Serialize the sound to JSON
-        var object = {};
-        object.uuid = this.uuid;
-        object.sound = this.sound;
-        const payload = JSON.stringify(object);
+        // Serialize the sound with the uuid to JSON
+        var payloadBuilder = {};
+        payloadBuilder.uuid = this.uuid;
+        payloadBuilder.sound = this.sound;
+        const payload = JSON.stringify(payloadBuilder);
 
-        // Send the payload via UDP (multicast)
-        message = new Buffer(payload);
-        s.send(message, 0, message.length, protocol.PORT, protocol.MULTICAST_ADDRESS, function (err, bytes) {
-            console.log("Sending payload: " + payload + " via port " + s.address().port);
+        // Send payload via UDP (multicast)
+        const MSG = Buffer.from(payload);
+        SOCKET.send(MSG, 0, MSG.length, PROTOCOL.PORT, PROTOCOL.MULTICAST_ADDRESS, function (err, bytes) {
+            console.log("Sending payload: " + payload + " via port " + SOCKET.address().port);
             console.log(`Error: ${err}`);
         });
     }
 
-    // Play the music every 1 second
-    setInterval(this.playMusic.bind(this), 1000);
+    // Play the music every <DURATION>
+    setInterval(this.playMusic.bind(this), DURATION);
 }
 
 // Get the appropriate sound depending on the instrument
-const sound = (function () {
-    switch (process.argv[2]) {
-        case 'piano':
-            return 'ti-ta-ti';
-        case 'trumpet':
-            return 'pouet';
-        case 'flute':
-            return 'trulu';
-        case 'violin':
-            return 'gzi-gzi';
-        case 'drum':
-            return 'boum-boum';
-        default:
-            return 'unknown';
-    }
+const SOUND = (function () {
+    if (INSTRU == null)
+        console.log('Error: <%s> is not a valid key in INSTRUMENTS', INSTRU);
+
+    else if (ORCHESTRE.INSTRUMENTS.hasOwnProperty(INSTRU) == false)
+        console.log('Key %s has no property in INSTRUMENTS', INSTRU);
+    
+    else
+        console.log('Read in INSTRUMENTS: <%s:%s>', INSTRU, ORCHESTRE.INSTRUMENTS[INSTRU]);
+    
+    return ORCHESTRE.INSTRUMENTS[INSTRU];
 })();
 
 // Create a new musician
-const musician = new Musician(sound);
+const MUSICIAN = new Musician(SOUND);
