@@ -36,6 +36,9 @@ function hasStoppedPlaying(musician) {
 }
 
 function getInstrument(sound) {
+    /* Find instrument key that match the sound */
+    // TODO Debug if time
+    //const INSTRU = Object.keys(ORCHESTRE.INSTRUMENTS).find((instru) => ORCHESTRE.INSTRUMENTS[instru] === sound);
     switch (sound) {
         case 'ti-ta-ti':
             return 'piano';
