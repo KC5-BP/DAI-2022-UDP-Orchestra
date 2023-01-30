@@ -5,8 +5,8 @@
 //	https://stackoverflow.com/questions/18363618/how-to-check-if-a-json-string-has-a-value-in-javascript/18363819#18363819
 
 // *** IMPORT CONFIGS ***
-const PROTOCOL = require('./protocol');
-const INSTRUMENTS = require('./instruments');
+const PROTOCOL  = require('./protocol');
+const ORCHESTRE = require('./instruments');
 
 // ***  Modules  ***
 // To create UUIDs
@@ -16,34 +16,36 @@ const DGRAM = require('dgram');
 
 // *** Constants ***
 // Playing duration of an instrument in [ms]
-const DURATION = 1000
+const DURATION = 1000;
 
 // *****************
 // Recover instrument name through argument & try to get its sound
 const INSTRU = process.argv[2];
-var instruSound;
+
 if (INSTRU == null) {
-	console.log('The %s: is not a valid key in INSTRUMENTS', instru);
+	console.log('Error: <%s> is not a valid key in INSTRUMENTS', INSTRU);
 	return;
-} else if (INSTRUMENTS.INSTRUMENTS.hasOwnProperty(INSTRU) == false) {
-	console.log('The given key has not a valid value in INSTRUMENTS: <%s:%s>', INSTRU, INSTRUMENTS.INSTRUMENTS[INSTRU]);
+} else if (ORCHESTRE.INSTRUMENTS.hasOwnProperty(INSTRU) == false) {
+	console.log('Given key has not a valid value in INSTRUMENTS: <%s:%s>', INSTRU, ORCHESTRE.INSTRUMENTS[INSTRU]);
 	return;
 } else {
-	instruSound = INSTRUMENTS.INSTRUMENTS[INSTRU];
+	console.log('Could read in INSTRUMENTS: <%s:%s> with sound: %s', INSTRU, ORCHESTRE.INSTRUMENTS[INSTRU]);
 }
 
 // Datagram socket used to send our UDP datagrams
 const SOCKET = DGRAM.createSocket('udp4');
 
-var object = {};
-object.uuid = uuidv4();
-object.sound = instruSound;
-const PAYLOAD = JSON.stringify(object);
+/* Preparing Payload */ 
+var tmpPayload = {};
+tmpPayload.uuid = uuidv4();
+tmpPayload.sound = ORCHESTRE.INSTRUMENTS[INSTRU];
+
+const PAYLOAD = JSON.stringify(tmpPayload);
 const MSG = new Buffer(PAYLOAD);
 
-function musicianIsPlaying(sound) {
-	// Send the payload via UDP (multicast)
-        s.send(MSG, 0, MSG.length, PROTOCOL.PORT, PROTOCOL.MULTICAST_ADDRESS, function (err) => {
+function musicianIsPlaying() {
+	// Send payload via UDP (in MULTICAST)
+	SOCKET.send(MSG, 0, MSG.length, PROTOCOL.PORT, PROTOCOL.MULTICAST_ADDRESS, function (err) {
 		if (err)
 			console.log("Error: ${err}");
 		else
@@ -51,5 +53,5 @@ function musicianIsPlaying(sound) {
 	});
 }
 
-// Play the music every 1 second
-setInterval(musicianIsPlaying(instruSound), DURATION);
+// Play the music every <DURATION> [ms]
+setInterval(musicianIsPlaying, DURATION);
