@@ -135,7 +135,7 @@ Reminder: answer the following questions [here](https://forms.gle/6SM7cu4cYhNsRv
 | Question | In Node.js, how can we **emit UDP datagrams**?                                                                                                                                        |
 |          | With ```const dgram = require('dgram'); const socket = dgram.createSocket('udp4'); socket.send(message, start, end, port, address, func);```                                          |
 | Question | In Node.js, how can we **access the command line arguments**?                                                                                                                         |
-|          | With ```process.argv```                                                                                                                                                               |
+|          | With ```process.argv[N]```                                                                                                                                                               |
 
 ## Task 3: package the "musician" app in a Docker image
 
