@@ -1,10 +1,23 @@
+// Some refs.:
+// - 09-UDPThermometer
+// 	https://github.com/HEIGVD-Course-DAI/CodeExamples/tree/main/09-UDPThermometers
+// - Diff. between VAR, LET & CONST:
+// 	https://www.geeksforgeeks.org/difference-between-var-let-and-const-keywords-in-javascript/
+// - Find existance in JSON:
+// 	https://stackoverflow.com/questions/18363618/how-to-check-if-a-json-string-has-a-value-in-javascript/18363819#18363819
+// - Simple TCP server example:
+//	https://riptutorial.com/node-js/example/22405/a-simple-tcp-server
+
 var protocol = require('./concert-protocol');
 
 // We use a standard Node.js module to work with UDP
 var dgram = require('dgram');
 
-// Include Nodejs' net module for TCP server.
-// const Net = require('net');
+const NET = require('net');
+
+// *** Constants ***
+// Musician kept if he has played in the interval
+const INTERVAL_UPPER_LIMIT = 5000;
 
 // Keeping track of active musicians
 function Musician(uuid, instrument) {
@@ -15,8 +28,8 @@ function Musician(uuid, instrument) {
 
 var musicians = new Map();
 
-function isAlive(musician) {
-    return (new Date() - musician.lastSeen) < 5000;
+function hasStoppedPlaying(musician) {
+    return (new Date() - musician.lastSeen) > INTERVAL_UPPER_LIMIT;
 }
 
 function getInstrument(sound) {
@@ -59,11 +72,7 @@ socket.on('message', function (msg, source) {
     }
 });
 
-// Create a new TCP server.
-// Based on the example from https://riptutorial.com/node-js/example/22405/a-simple-tcp-server
-
-// const server = new Net.Server();
-const server = require('net').createServer()
+const server = NET.createServer()
 
 // The server listens for any incoming connection requests.
 server.listen(protocol.TCP_PROTOCOL_PORT, function () {
@@ -75,16 +84,11 @@ server.on('connection', function (socket) {
     console.log('A new connection has been established.');
     console.log('All musicians: ' + JSON.stringify(Array.from(musicians.values())));
 
-    // Send the list of active musicians to the client.
-    // const activeMusicians = new Map(
-    //     [...musicians].filter(isAlive) // Black js magic
-    // );
     const activeMusicians = musicians;
-    for (const [key, value] of activeMusicians) {
-        if (!isAlive(value)) {
+    for (const [key, value] of activeMusicians)
+        if (hasStoppedPlaying(value))
             activeMusicians.delete(key);
-        }
-    }
+
     socket.write(JSON.stringify(Array.from(activeMusicians.values())));
     console.log('Sent the list of active musicians to the client: ' + JSON.stringify(Array.from(activeMusicians.values())));
 
