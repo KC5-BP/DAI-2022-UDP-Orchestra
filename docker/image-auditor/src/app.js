@@ -73,24 +73,27 @@ server.listen(protocol.TCP_PROTOCOL_PORT, function () {
 // New connection event.
 server.on('connection', function (socket) {
     console.log('A new connection has been established.');
+    console.log('All musicians: ' + JSON.stringify(Array.from(musicians.values())));
 
     // Send the list of active musicians to the client.
-    const activeMusicians = new Map(
-        [...musicians].filter(isAlive) // Black js magic
-    );
+    // const activeMusicians = new Map(
+    //     [...musicians].filter(isAlive) // Black js magic
+    // );
+    const activeMusicians = musicians;
+    for (const [key, value] of activeMusicians) {
+        if (!isAlive(value)) {
+            activeMusicians.delete(key);
+        }
+    }
     socket.write(JSON.stringify(Array.from(activeMusicians.values())));
     console.log('Sent the list of active musicians to the client: ' + JSON.stringify(Array.from(activeMusicians.values())));
 
-    // // On end event.
-    // socket.on('end', function () {
-    //     console.log('Closing connection with the client');
-    // });
-    //
-    // // Catch errors.
-    // socket.on('error', function (err) {
-    //     console.log(`Error: ${err}`);
-    // });
+    // Catch errors.
+    socket.on('error', function (err) {
+        console.log(`Error: ${err}`);
+    });
 
+    socket.end();
 });
 
 
