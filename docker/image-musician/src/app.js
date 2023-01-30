@@ -1,4 +1,4 @@
-var protocol = require('./concert-protocol');
+var protocol = require('./protocol');
 
 // We use a standard Node.js module to create UUIDs
 const {v4: uuidv4} = require('uuid');
@@ -22,7 +22,7 @@ function Musician(sound) {
 
         // Send the payload via UDP (multicast)
         message = new Buffer(payload);
-        s.send(message, 0, message.length, protocol.PROTOCOL_PORT, protocol.PROTOCOL_MULTICAST_ADDRESS, function (err, bytes) {
+        s.send(message, 0, message.length, protocol.PORT, protocol.MULTICAST_ADDRESS, function (err, bytes) {
             console.log("Sending payload: " + payload + " via port " + s.address().port);
             console.log(`Error: ${err}`);
         });

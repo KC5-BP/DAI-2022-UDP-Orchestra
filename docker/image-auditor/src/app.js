@@ -9,7 +9,7 @@
 //	https://riptutorial.com/node-js/example/22405/a-simple-tcp-server
 
 // *** IMPORT CONFIGS ***
-const PROTOCOL = require('./concert-protocol');
+const PROTOCOL = require('./protocol');
 
 // ***  Modules  ***
 // To work with UDP Datagram
@@ -52,15 +52,16 @@ function getInstrument(sound) {
     }
 }
 
-const socket = DGRAM.createSocket('udp4');
-socket.bind(PROTOCOL.PORT, function () {
+const SOCKET = DGRAM.createSocket('udp4');
+
+SOCKET.bind(PROTOCOL.PORT, function () {
     console.log("Joining multicast group");
-    socket.addMembership(PROTOCOL.MULTICAST_ADDRESS);
+    SOCKET.addMembership(PROTOCOL.MULTICAST_ADDRESS);
 });
 
 // This call back is invoked when a new datagram has arrived.
-socket.on('message', function (msg, source) {
-    console.log("Data has arrived: " + msg + ". Source port: " + source.port);
+SOCKET.on('message', function (msg, src) {
+    console.log("Data has arrived: " + msg + ". Source port: " + src.port);
     msg = JSON.parse(msg);
     if (musicians.has(msg.uuid)) {
         musicians.get(msg.uuid).lastSeen = new Date();
@@ -71,15 +72,15 @@ socket.on('message', function (msg, source) {
     }
 });
 
-const server = NET.createServer()
+const TCP_SERVER = NET.createServer()
 
 // The server listens for any incoming connection requests.
-server.listen(PROTOCOL.TCP_PORT, function () {
+TCP_SERVER.listen(PROTOCOL.TCP_PORT, function () {
     console.log(`Server listening for connection requests on socket localhost:${PROTOCOL.TCP_PORT}.`);
 });
 
 // New connection event.
-server.on('connection', function (socket) {
+TCP_SERVER.on('connection', function (SOCKET) {
     console.log('A new connection has been established.');
     console.log('All musicians: ' + JSON.stringify(Array.from(musicians.values())));
 
@@ -87,15 +88,15 @@ server.on('connection', function (socket) {
         if (hasStoppedPlaying(value))
             musicians.delete(key);
 
-    socket.write(JSON.stringify(Array.from(musicians.values())));
+    SOCKET.write(JSON.stringify(Array.from(musicians.values())));
     console.log('Sent the list of active musicians to the client: ' + JSON.stringify(Array.from(musicians.values())));
 
     // Catch errors.
-    socket.on('error', function (err) {
+    SOCKET.on('error', function (err) {
         console.log(`Error: ${err}`);
     });
 
-    socket.end();
+    SOCKET.end();
 });
 
 

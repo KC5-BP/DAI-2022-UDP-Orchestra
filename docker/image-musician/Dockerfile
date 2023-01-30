@@ -1,6 +1,6 @@
 FROM node:19-alpine
 
-COPY src concert-protocol.js /opt/app/
+COPY src configs /opt/app/
 
 WORKDIR /opt/app/
 
