@@ -84,13 +84,12 @@ server.on('connection', function (socket) {
     console.log('A new connection has been established.');
     console.log('All musicians: ' + JSON.stringify(Array.from(musicians.values())));
 
-    const activeMusicians = musicians;
-    for (const [key, value] of activeMusicians)
+    for (const [key, value] of musicians)
         if (hasStoppedPlaying(value))
-            activeMusicians.delete(key);
+            musicians.delete(key);
 
-    socket.write(JSON.stringify(Array.from(activeMusicians.values())));
-    console.log('Sent the list of active musicians to the client: ' + JSON.stringify(Array.from(activeMusicians.values())));
+    socket.write(JSON.stringify(Array.from(musicians.values())));
+    console.log('Sent the list of active musicians to the client: ' + JSON.stringify(Array.from(musicians.values())));
 
     // Catch errors.
     socket.on('error', function (err) {
