@@ -1,8 +1,5 @@
 var protocol = require('./concert-protocol');
 
-// We use a standard Node.js module to create UUIDs
-const {v4: uuidv4} = require('uuid');
-
 // We use a standard Node.js module to work with UDP
 var dgram = require('dgram');
 
