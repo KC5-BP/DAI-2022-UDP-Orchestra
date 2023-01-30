@@ -49,6 +49,7 @@ socket.bind(protocol.PROTOCOL_PORT, function () {
 // This call back is invoked when a new datagram has arrived.
 socket.on('message', function (msg, source) {
     console.log("Data has arrived: " + msg + ". Source port: " + source.port);
+    msg = JSON.parse(msg);
     if (musicians.has(msg.uuid)) {
         musicians.get(msg.uuid).lastSeen = new Date();
         console.log("Updated musician " + msg.uuid);
