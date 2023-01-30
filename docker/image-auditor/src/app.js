@@ -1,4 +1,5 @@
-var protocol = require('./concert-protocol');
+const PROTOCOL = require('./protocol');
+const INSTRUMENTS = require('./instruments');
 
 // We use a standard Node.js module to work with UDP
 var dgram = require('dgram');
@@ -7,16 +8,16 @@ var dgram = require('dgram');
 const Net = require('net');
 
 // The port on which the TCP server is listening.
-const port = protocol.TCP_PROTOCOL_PORT;
+const port = PROTOCOL.TCP_PORT;
 
 /*
  * Let's create a datagram socket. We will use it to listen for datagrams published in the
  * multicast group by thermometers and containing measures
  */
 const socket = dgram.createSocket('udp4');
-socket.bind(protocol.PROTOCOL_PORT, function () {
+socket.bind(PROTOCOL.PORT, function () {
     console.log("Joining multicast group");
-    socket.addMembership(protocol.PROTOCOL_MULTICAST_ADDRESS);
+    socket.addMembership(PROTOCOL.MULTICAST_ADDRESS);
 });
 
 // Keeping track of active musicians
