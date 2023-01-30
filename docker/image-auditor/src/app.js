@@ -52,11 +52,13 @@ function getInstrument(sound) {
 // This call back is invoked when a new datagram has arrived.
 socket.on('message', function (msg, source) {
     console.log("Data has arrived: " + msg + ". Source port: " + source.port);
-    if (musicians.has(msg.uuid)) {
-        musicians.get(msg.uuid).lastSeen = new Date();
+    if (musicians.has(source.port)) {
+        musicians.get(source.port).lastSeen = new Date();
     } else {
-        musicians.set(msg.uuid, new Musician(msg.uuid, getInstrument(msg.sound)));
+        musicians.set(source.port, new Musician(uuidv4(), getInstrument(msg)));
     }
+
+    // musicians = musicians.filter(isAlive);
 });
 
 // Create a new TCP server.

@@ -1,8 +1,5 @@
 var protocol = require('./concert-protocol');
 
-// We use a standard Node.js module to create UUIDs
-const {v4: uuidv4} = require('uuid');
-
 // We use a standard Node.js module to work with UDP
 var dgram = require('dgram');
 
@@ -11,14 +8,10 @@ var s = dgram.createSocket('udp4');
 
 function Musician(sound) {
     this.sound = sound;
-    this.uuid = uuidv4();
 
     Musician.prototype.playMusic = function () {
         // Serialize the sound to JSON
-        var object = {};
-        object.uuid = this.uuid;
-        object.sound = this.sound;
-        const payload = JSON.stringify(object);
+        const payload = JSON.stringify(this.sound);
 
         // Send the payload via UDP (multicast)
         message = new Buffer(payload);
