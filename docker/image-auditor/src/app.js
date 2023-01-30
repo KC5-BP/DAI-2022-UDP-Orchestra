@@ -8,17 +8,20 @@
 // - Simple TCP server example:
 //	https://riptutorial.com/node-js/example/22405/a-simple-tcp-server
 
+// *** IMPORT CONFIGS ***
 const PROTOCOL = require('./concert-protocol');
 
-// We use a standard Node.js module to work with UDP
+// ***  Modules  ***
+// To work with UDP Datagram
 const DGRAM = require('dgram');
-
+// To work with TCP server
 const NET = require('net');
 
 // *** Constants ***
 // Musician kept if he has played in the interval
 const INTERVAL_UPPER_LIMIT = 5000;
 
+// *****************
 // Keeping track of active musicians
 function Musician(uuid, instrument) {
     this.uuid = uuid;
