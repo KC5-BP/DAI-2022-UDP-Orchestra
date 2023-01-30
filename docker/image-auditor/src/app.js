@@ -1,23 +1,34 @@
+// Some refs.:
+// - Diff. between VAR, LET & CONST:
+// 	https://www.geeksforgeeks.org/difference-between-var-let-and-const-keywords-in-javascript/
+// - Find existance in JSON:
+//	https://stackoverflow.com/questions/18363618/how-to-check-if-a-json-string-has-a-value-in-javascript/18363819#18363819
+// - Simple TCP server example:
+//	https://riptutorial.com/node-js/example/22405/a-simple-tcp-server
+
+// *** IMPORT CONFIGS ***
 const PROTOCOL = require('./protocol');
 const INSTRUMENTS = require('./instruments');
 
-// We use a standard Node.js module to work with UDP
-var dgram = require('dgram');
+// ***  Modules  ***
+// To work with UDP Datagram
+const DGRAM = require('dgram');
+// To work with TCP server
+const NET = require('net');
 
-// Include Nodejs' net module for TCP server.
-const Net = require('net');
-
-// The port on which the TCP server is listening.
-const port = PROTOCOL.TCP_PORT;
+// *** Constants ***
+// Musician kept if he has played in the interval
+const INTERVAL_UPPER_LIMIT = 5000;
 
 /*
  * Let's create a datagram socket. We will use it to listen for datagrams published in the
  * multicast group by thermometers and containing measures
  */
-const socket = dgram.createSocket('udp4');
-socket.bind(PROTOCOL.PORT, function () {
+const SOCKET = DGRAM.createSocket('udp4');
+
+SOCKET.bind(PROTOCOL.PORT, function () {
     console.log("Joining multicast group");
-    socket.addMembership(PROTOCOL.MULTICAST_ADDRESS);
+    SOCKET.addMembership(PROTOCOL.MULTICAST_ADDRESS);
 });
 
 // Keeping track of active musicians
@@ -51,45 +62,44 @@ function getInstrument(sound) {
 }
 
 // This call back is invoked when a new datagram has arrived.
-socket.on('message', function (msg, source) {
-    console.log("Data has arrived: " + msg + ". Source port: " + source.port);
-    if (musicians.has(msg.uuid)) {
-        musicians.get(msg.uuid).lastSeen = new Date();
-    } else {
-        musicians.set(msg.uuid, new Musician(msg.uuid, getInstrument(msg.sound)));
-    }
+SOCKET.on('message', function (msg, source) {
+	const data = {
+		...JSON.parse(msg),
+		lastActive: Date.now(),
+	};
+
+	data.instrument = Object.keys(INSTRUMENTS.INSTRUMENTS).find((instru) => INSTRUMENTS.INSTRUMENTS[instru] === data.sound);
+	data.activeSince = musicians.has(data.uuid) ? musicians.get(data.uuid).activeSince : data.lastActive;
+	delete data.sound;
+
+	musicians.set(data.uuid, data);
+
+	console.log('Data has arrived: ' + msg + '. Source port: ' + source.port);
 });
 
 // Create a new TCP server.
-// Based on the example from https://riptutorial.com/node-js/example/22405/a-simple-tcp-server
 
-const server = new Net.Server();
+const SERVER = new NET.Server();
 
 // The server listens for any incoming connection requests.
-server.listen(port, function () {
-    console.log(`Server listening for connection requests on socket localhost:${port}.`);
-});
+SERVER.listen(PROTOCOL.TCP_PORT);
 
 // New connection event.
-server.on('connection', function (socket) {
-    console.log('A new connection has been established.');
-
-    // Send the list of active musicians to the client.
-    const activeMusicians = new Map(
-        [...musicians].filter(isAlive) // Black js magic
-    );
-    socket.write(JSON.stringify(Array.from(activeMusicians.values())));
-
-    // On end event.
-    socket.on('end', function () {
-        console.log('Closing connection with the client');
-    });
-
-    // Catch errors.
-    socket.on('error', function (err) {
-        console.log(`Error: ${err}`);
-    });
-
+SERVER.on('connection', function (SOCKET) {
+	const now = Date.now();
+	const content = Array.from(musicians.entries())
+		.filter(([uuid, musician]) => {
+			const toRemove = now - musician.lastActive > ACTIVE_INTERVAL;
+			if (toRemove) musicians.delete(uuid);
+			return !toRemove;
+		})
+		.map(([uuid, musician]) => ({
+			uuid,
+			instrument: musician.instrument,
+			activeSince: new Date(musician.activeSince),
+		}));
+	SOCKET.write(`${JSON.stringify(content)}\n`);
+	SOCKET.end();
 });
 
 
