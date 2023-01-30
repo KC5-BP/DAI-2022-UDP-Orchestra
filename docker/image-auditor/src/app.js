@@ -8,10 +8,10 @@
 // - Simple TCP server example:
 //	https://riptutorial.com/node-js/example/22405/a-simple-tcp-server
 
-var protocol = require('./concert-protocol');
+const PROTOCOL = require('./concert-protocol');
 
 // We use a standard Node.js module to work with UDP
-var dgram = require('dgram');
+const DGRAM = require('dgram');
 
 const NET = require('net');
 
@@ -49,14 +49,10 @@ function getInstrument(sound) {
     }
 }
 
-/*
- * Let's create a datagram socket. We will use it to listen for datagrams published in the
- * multicast group by thermometers and containing measures
- */
-const socket = dgram.createSocket('udp4');
-socket.bind(protocol.PROTOCOL_PORT, function () {
+const socket = DGRAM.createSocket('udp4');
+socket.bind(PROTOCOL.PORT, function () {
     console.log("Joining multicast group");
-    socket.addMembership(protocol.PROTOCOL_MULTICAST_ADDRESS);
+    socket.addMembership(PROTOCOL.MULTICAST_ADDRESS);
 });
 
 // This call back is invoked when a new datagram has arrived.
@@ -75,8 +71,8 @@ socket.on('message', function (msg, source) {
 const server = NET.createServer()
 
 // The server listens for any incoming connection requests.
-server.listen(protocol.TCP_PROTOCOL_PORT, function () {
-    console.log(`Server listening for connection requests on socket localhost:${protocol.TCP_PROTOCOL_PORT}.`);
+server.listen(PROTOCOL.TCP_PORT, function () {
+    console.log(`Server listening for connection requests on socket localhost:${PROTOCOL.TCP_PORT}.`);
 });
 
 // New connection event.
