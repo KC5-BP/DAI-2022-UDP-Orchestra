@@ -165,7 +165,7 @@ Reminder: answer the following questions [here](https://forms.gle/6SM7cu4cYhNsRv
 | Question | How can we use the `Day.js` npm module to help us with **date manipulations** and formatting?                                                                                                                   |
 |          | To manipulate and make operations on dates, for example to compute how long a musician hasn't been playing. However, we did not use it.                                                                         |
 | Question | When and how do we **get rid of inactive players**?                                                                                                                                                             |
-|          | In our choice of implementation, we don't get rid of musicians internally. But when we recieve a TCP request we only send the active ones.                                                                      |
+|          | When we recieve a TCP request we delete every inactive musician and only send the active ones.                                                                                                                  |
 | Question | How do I implement a **simple TCP server** in Node.js?                                                                                                                                                          |
 |          | By following an online tutorial.<br/>Or by using the `net` NodeJS module, creating a server that listen on the dedicated TCP port and creating a callback function for the \`connection\` event on this server. |
 
