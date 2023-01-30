@@ -129,7 +129,7 @@ Reminder: answer the following questions [here](https://forms.gle/6SM7cu4cYhNsRv
 | Question | How can we use the `https://www.npmjs.com/` web site?                                                                                                                                 |
 |          | To research available NodeJS packages.                                                                                                                                                |
 | Question | In JavaScript, how can we **generate a UUID** compliant with RFC4122?                                                                                                                 |
-|          | There are numerous packages that can produce uuid, but since Node version 14.17.0, it can be done using:<br/>```const { randomUUID } = require('crypto'); var uuid = randomUUID();``` |
+|          | There are numerous packages that can produce uuid, we use this [reference](https://www.npmjs.com/package/uuid) to do so. In brief, it can be done using:<br/>```const {v4: uuidv4} = require('uuid'); const uuid = uuidv4();``` |
 | Question | In Node.js, how can we execute a function on a **periodic** basis?                                                                                                                    |
 |          | With the function ```setInterval(func, delay, arg0, arg1, /* … ,*/ argN)```                                                                                                           |
 | Question | In Node.js, how can we **emit UDP datagrams**?                                                                                                                                        |
