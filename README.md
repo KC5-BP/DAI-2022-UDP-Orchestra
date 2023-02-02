@@ -118,24 +118,24 @@ Reminder: answer the following questions [here](https://forms.gle/6SM7cu4cYhNsRv
 
 ## Task 2: implement a "musician" Node.js application
 
-| #        | Topic                                                                                                                                                                                 |
-| -------- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Question | In a JavaScript program, if we have an object, how can we **serialize it in JSON**?                                                                                                   |
-|          | ```JSON.stringify(<the_object>);```                                                                                                                                                   |
-| Question | What is **npm**?                                                                                                                                                                      |
-|          | The official package manager of NodeJS.                                                                                                                                               |
-| Question | What is the `npm install` command?                                                                                                                                                    |
-|          | The command of npm to install all required libraries                                                                                                                                  |
-| Question | How can we use the `https://www.npmjs.com/` web site?                                                                                                                                 |
-|          | To research available NodeJS packages.                                                                                                                                                |
-| Question | In JavaScript, how can we **generate a UUID** compliant with RFC4122?                                                                                                                 |
+| #        | Topic                                                                                                                                                                                                                           |
+| -------- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Question | In a JavaScript program, if we have an object, how can we **serialize it in JSON**?                                                                                                                                             |
+|          | ```JSON.stringify(<the_object>);```                                                                                                                                                                                             |
+| Question | What is **npm**?                                                                                                                                                                                                                |
+|          | The official package manager of NodeJS.                                                                                                                                                                                         |
+| Question | What is the `npm install` command?                                                                                                                                                                                              |
+|          | The command of npm to install all required libraries.                                                                                                                                                                           |
+| Question | How can we use the `https://www.npmjs.com/` web site?                                                                                                                                                                           |
+|          | To research available NodeJS packages.                                                                                                                                                                                          |
+| Question | In JavaScript, how can we **generate a UUID** compliant with RFC4122?                                                                                                                                                           |
 |          | There are numerous packages that can produce uuid, we use this [reference](https://www.npmjs.com/package/uuid) to do so. In brief, it can be done using:<br/>```const {v4: uuidv4} = require('uuid'); const uuid = uuidv4();``` |
-| Question | In Node.js, how can we execute a function on a **periodic** basis?                                                                                                                    |
-|          | With the function ```setInterval(func, delay, arg0, arg1, /* … ,*/ argN)```                                                                                                           |
-| Question | In Node.js, how can we **emit UDP datagrams**?                                                                                                                                        |
-|          | With ```const dgram = require('dgram'); const socket = dgram.createSocket('udp4'); socket.send(message, start, end, port, address, func);```                                          |
-| Question | In Node.js, how can we **access the command line arguments**?                                                                                                                         |
-|          | With ```process.argv[N]```                                                                                                                                                               |
+| Question | In Node.js, how can we execute a function on a **periodic** basis?                                                                                                                                                              |
+|          | With the function ```setInterval(func, delay, arg0, arg1, /* … ,*/ argN)```                                                                                                                                                     |
+| Question | In Node.js, how can we **emit UDP datagrams**?                                                                                                                                                                                  |
+|          | With ```const dgram = require('dgram'); const socket = dgram.createSocket('udp4'); socket.send(message, start, end, port, address, func);```                                                                                    |
+| Question | In Node.js, how can we **access the command line arguments**?                                                                                                                                                                   |
+|          | With ```process.argv[N]```                                                                                                                                                                                                      |
 
 ## Task 3: package the "musician" app in a Docker image
 
